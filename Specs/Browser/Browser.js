@@ -259,7 +259,16 @@ describe('Browser.parseUA', function(){
 				version: 12,
 				platform: 'windows'
 			}
-		}
+		},
+      edge12latest: {
+         desc: 'Edge 12.1024',
+         string: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135  Safari/537.36 Edge/12.1024',
+         expect: {
+            name: 'edge',
+            version: 12,
+            platform: 'windows'
+         }
+      }
 	};
 
 	var testUA = function(ua){

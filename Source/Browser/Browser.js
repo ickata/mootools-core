@@ -23,18 +23,15 @@ var parse = function(ua, platform){
 	ua = ua.toLowerCase();
 	platform = (platform ? platform.toLowerCase() : '');
 
-	// chrome is included in the edge UA, so need to check for edge first,
-	// before checking if it's chrome.
-	var UA = ua.match(/(edge)[\s\/:]([\w\d\.]+)/);
-	if (!UA){
-		UA = ua.match(/(opera|ie|firefox|chrome|trident|crios|version)[\s\/:]([\w\d\.]+)?.*?(safari|(?:rv[\s\/:]|version[\s\/:])([\w\d\.]+)|$)/) || [null, 'unknown', 0];
-	}
+	var UA = ua.match(/(?:chrome\/[\.\d]+\s+safari\/[\.\d]+\s+)?(opera|ie|firefox|edge|chrome|trident|crios|version)[\s\/:]([\w\d\.]+)?.*?(safari|(?:rv[\s\/:]|version[\s\/:])([\w\d\.]+)|$)/) || [null, 'unknown', 0];
 
 	if (UA[1] == 'trident'){
 		UA[1] = 'ie';
 		if (UA[4]) UA[2] = UA[4];
 	} else if (UA[1] == 'crios'){
 		UA[1] = 'chrome';
+	} else if (UA[1] == 'edge'){
+		UA[2] = UA[2].toInt();
 	}
 
 	platform = ua.match(/ip(?:ad|od|hone)/) ? 'ios' : (ua.match(/(?:webos|android)/) || ua.match(/mac|win|linux/) || ['other'])[0];
