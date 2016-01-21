@@ -5,6 +5,7 @@ requires: ~
 provides: ~
 ...
 */
+
 describe('Fx', function(){
 
 	beforeEach(function(){
@@ -20,9 +21,8 @@ describe('Fx', function(){
 		if (transition == 'extend') return;
 
 		it('should start a Fx and call the onComplete event with ' + transition + ' as timing function', function(){
-
-			var onComplete = jasmine.createSpy('complete'),
-				onStart = jasmine.createSpy('start');
+			var onComplete = sinon.spy(),
+				onStart = sinon.spy();
 
 			var fx = new Fx({
 				duration: 500,
@@ -31,23 +31,21 @@ describe('Fx', function(){
 				onStart: onStart
 			});
 
-			expect(onStart).not.toHaveBeenCalled();
+			expect(onStart.called).to.equal(false);
 
 			fx.start(10, 20);
 
 			this.clock.tick(100);
-			expect(onStart).toHaveBeenCalled();
-			expect(onComplete).not.toHaveBeenCalled();
+			expect(onStart.called).to.equal(true);
+			expect(onComplete.called).to.equal(false);
 
 			this.clock.tick(1000);
-			expect(onComplete).toHaveBeenCalled();
-
+			expect(onComplete.called).to.equal(true);
 		});
 	});
 
 	it('should cancel a Fx', function(){
-
-		var onCancel = jasmine.createSpy('Fx.cancel');
+		var onCancel = sinon.spy();
 
 		var fx = new Fx({
 			duration: 500,
@@ -56,17 +54,13 @@ describe('Fx', function(){
 		});
 
 		fx.start();
-
-		expect(onCancel).not.toHaveBeenCalled();
+		expect(onCancel.called).to.equal(false);
 
 		fx.cancel();
-
-		expect(onCancel).toHaveBeenCalled();
-
+		expect(onCancel.called).to.equal(true);
 	});
 
 	it('should set the computed value', function(){
-
 		var FxLog = new Class({
 			Extends: Fx,
 			set: function(current){
@@ -79,13 +73,10 @@ describe('Fx', function(){
 		}).start(0, 10);
 
 		this.clock.tick(2000);
-
-		expect(fx.foo).toEqual(10);
-
+		expect(fx.foo).to.equal(10);
 	});
 
 	it('should pause and resume', function(){
-
 		var FxLog = new Class({
 			Extends: Fx,
 			set: function(current){
@@ -103,22 +94,19 @@ describe('Fx', function(){
 
 		fx.pause();
 		value = fx.foo;
-		expect(fx.foo).toBeGreaterThan(0);
-		expect(fx.foo).toBeLessThan(1);
+		expect(fx.foo).to.be.greaterThan(0);
+		expect(fx.foo).to.be.lessThan(1);
 
 		this.clock.tick(1000);
 
-		expect(fx.foo).toEqual(value);
+		expect(fx.foo).to.equal(value);
 		fx.resume();
 
 		this.clock.tick(2000);
-
-		expect(fx.foo).toEqual(1);
-
+		expect(fx.foo).to.equal(1);
 	});
 
 	it('should chain the Fx', function(){
-
 		var counter = 0;
 		var fx = new Fx({
 			duration: 500,
@@ -133,12 +121,11 @@ describe('Fx', function(){
 		this.clock.tick(1000);
 		this.clock.tick(1000);
 
-		expect(counter).toEqual(2);
+		expect(counter).to.equal(2);
 	});
 
 	it('should cancel the Fx after a new Fx:start with the link = cancel option', function(){
-
-		var onCancel = jasmine.createSpy('Fx.cancel');
+		var onCancel = sinon.spy();
 
 		var fx = new Fx({
 			duration: 500,
@@ -149,22 +136,7 @@ describe('Fx', function(){
 		fx.start().start();
 
 		this.clock.tick(1000);
-
-		expect(onCancel).toHaveBeenCalled();
-
-	});
-
-});
-
-describe('Fx', function(){
-
-	beforeEach(function(){
-		this.clock = sinon.useFakeTimers();
-	});
-
-	afterEach(function(){
-		this.clock.reset();
-		this.clock.restore();
+		expect(onCancel.called).to.equal(true);
 	});
 
 	it('should return the paused state', function(){
@@ -172,16 +144,73 @@ describe('Fx', function(){
 			duration: 500
 		}).start();
 
-		expect(fx.isPaused()).toEqual(false);
+		expect(fx.isPaused()).to.equal(false);
 
 		this.clock.tick(300);
 		fx.pause();
 
-		expect(fx.isPaused()).toEqual(true);
+		expect(fx.isPaused()).to.equal(true);
 
 		fx.resume();
 		this.clock.tick(600);
-		expect(fx.isPaused()).toEqual(false);
+		expect(fx.isPaused()).to.equal(false);
+	});
+
+});
+
+describe('Fx (thenable)', function(){
+
+	beforeEach(function(){
+		this.fx = new Fx({
+			duration: 1,
+			transition: 'sine:in:out'
+		});
+
+		var self = this;
+		this.onFulfilled = sinon.spy(function(){ self.expectations.apply(self, arguments); });
+		this.onRejected = sinon.spy(function(){ self.expectations.apply(self, arguments); });
+
+		this.fx.then(this.onFulfilled, this.onRejected);
+	});
+
+	it('should fulfill when completed', function(done){
+		this.fx.start(10, 20);
+
+		expect(this.onRejected.called).to.equal(false);
+		expect(this.onFulfilled.called).to.equal(false);
+
+		this.expectations = function(){
+			var error;
+			try {
+				expect(this.onRejected.called).to.equal(false);
+				expect(this.onFulfilled.called).to.equal(true);
+				expect(this.onFulfilled.args[0][0]).to.equal(null);
+			} catch (thrown){
+				error = thrown;
+			}
+			done(error);
+		};
+	});
+
+	it('should reject when cancelled', function(done){
+		this.fx.start();
+
+		expect(this.onFulfilled.called).to.equal(false);
+		expect(this.onRejected.called).to.equal(false);
+
+		this.fx.cancel();
+
+		this.expectations = function(){
+			var error;
+			try {
+				expect(this.onFulfilled.called).to.equal(false);
+				expect(this.onRejected.called).to.equal(true);
+				expect(this.onRejected.args[0][0]).to.equal(this.fx);
+			} catch (thrown){
+				error = thrown;
+			}
+			done(error);
+		};
 	});
 
 });

@@ -7,7 +7,7 @@ description: The heart of MooTools.
 
 license: MIT-style license.
 
-copyright: Copyright (c) 2006-2014 [Valerio Proietti](http://mad4milk.net/).
+copyright: Copyright (c) 2006-2015 [Valerio Proietti](http://mad4milk.net/).
 
 authors: The MooTools production team (http://mootools.net/developers/)
 
@@ -19,11 +19,11 @@ provides: [Core, MooTools, Type, typeOf, instanceOf, Native]
 
 ...
 */
-/*! MooTools: the javascript framework. license: MIT-style license. copyright: Copyright (c) 2006-2014 [Valerio Proietti](http://mad4milk.net/).*/
+/*! MooTools: the javascript framework. license: MIT-style license. copyright: Copyright (c) 2006-2015 [Valerio Proietti](http://mad4milk.net/).*/
 (function(){
 
 this.MooTools = {
-	version: '1.5.2-dev',
+	version: '1.6.1-dev',
 	build: '%build%'
 };
 
@@ -63,7 +63,7 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 var enumerables = true;
 for (var i in {toString: 1}) enumerables = null;
 if (enumerables) enumerables = ['hasOwnProperty', 'valueOf', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'constructor'];
-function forEachObjectEnumberableKey(object, fn, bind) {
+function forEachObjectEnumberableKey(object, fn, bind){
 	if (enumerables) for (var i = enumerables.length; i--;){
 		var k = enumerables[i];
 		// signature has key-value, so overloadSetter can directly pass the
@@ -122,25 +122,34 @@ Function.prototype.implement = function(key, value){
 
 var slice = Array.prototype.slice;
 
-Function.from = function(item){
+Array.convert = function(item){
+	if (item == null) return [];
+	return (Type.isEnumerable(item) && typeof item != 'string') ? (typeOf(item) == 'array') ? item : slice.call(item) : [item];
+};
+
+Function.convert = function(item){
 	return (typeOf(item) == 'function') ? item : function(){
 		return item;
 	};
 };
 
-Array.from = function(item){
-	if (item == null) return [];
-	return (Type.isEnumerable(item) && typeof item != 'string') ? (typeOf(item) == 'array') ? item : slice.call(item) : [item];
-};
 
-Number.from = function(item){
+Number.convert = function(item){
 	var number = parseFloat(item);
 	return isFinite(number) ? number : null;
 };
 
-String.from = function(item){
+String.convert = function(item){
 	return item + '';
 };
+
+/*<1.5compat>*/
+Array.from = Array.convert;
+/*</1.5compat>*/
+
+Function.from = Function.convert;
+Number.from = Number.convert;
+String.from = String.convert;
 
 // hide, protect
 
@@ -378,7 +387,7 @@ var mergeOne = function(source, key, current){
 		case 'object':
 			if (typeOf(source[key]) == 'object') Object.merge(source[key], current);
 			else source[key] = Object.clone(current);
-		break;
+			break;
 		case 'array': source[key] = current.clone(); break;
 		default: source[key] = current;
 	}
@@ -479,7 +488,7 @@ Array.type = function(item){
 };
 
 this.$A = function(item){
-	return Array.from(item).slice();
+	return Array.convert(item).slice();
 };
 
 this.$arguments = function(i){
@@ -523,10 +532,10 @@ this.$merge = function(){
 	return Object.merge.apply(null, args);
 };
 
-this.$lambda = Function.from;
+this.$lambda = Function.convert;
 this.$mixin = Object.merge;
 this.$random = Number.random;
-this.$splat = Array.from;
+this.$splat = Array.convert;
 this.$time = Date.now;
 
 this.$type = function(object){

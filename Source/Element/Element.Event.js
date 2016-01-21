@@ -41,7 +41,7 @@ var patched_buttons = []; // needed for a Firefox patch - see below
 					return true;
 				};
 			}
-			if (custom.base) realType = Function.from(custom.base).call(this, type);
+			if (custom.base) realType = Function.convert(custom.base).call(this, type);
 		}
 		var defn = function(){
 			return fn.call(self);
@@ -124,7 +124,7 @@ var patched_buttons = []; // needed for a Firefox patch - see below
 		var custom = Element.Events[type];
 		if (custom){
 			if (custom.onRemove) custom.onRemove.call(this, fn, type);
-			if (custom.base) type = Function.from(custom.base).call(this, type);
+			if (custom.base) type = Function.convert(custom.base).call(this, type);
 		}
 		return (Element.NativeEvents[type]) ? this.removeListener(type, value, arguments[2]) : this;
 	},
@@ -157,7 +157,7 @@ var patched_buttons = []; // needed for a Firefox patch - see below
 	fireEvent: function(type, args, delay){
 		var events = this.retrieve('events');
 		if (!events || !events[type]) return this;
-		args = Array.from(args);
+		args = Array.convert(args);
 
 		events[type].keys.each(function(fn){
 			if (delay) fn.delay(delay, this, args);

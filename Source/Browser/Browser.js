@@ -197,7 +197,7 @@ Browser.extend({
 
 this.Window = this.$constructor = new Type('Window', function(){});
 
-this.$family = Function.from('window').hide();
+this.$family = Function.convert('window').hide();
 
 Window.mirror(function(name, method){
 	window[name] = method;
@@ -205,7 +205,7 @@ Window.mirror(function(name, method){
 
 this.Document = document.$constructor = new Type('Document', function(){});
 
-document.$family = Function.from('document').hide();
+document.$family = Function.convert('document').hide();
 
 Document.mirror(function(name, method){
 	document[name] = method;
@@ -215,7 +215,7 @@ document.html = document.documentElement;
 if (!document.head) document.head = document.getElementsByTagName('head')[0];
 
 if (document.execCommand) try {
-	document.execCommand("BackgroundImageCache", false, true);
+	document.execCommand('BackgroundImageCache', false, true);
 } catch (e){}
 
 /*<ltIE9>*/
@@ -229,11 +229,11 @@ if (this.attachEvent && !this.addEventListener){
 }
 
 // IE fails on collections and <select>.options (refers to <select>)
-var arrayFrom = Array.from;
+var arrayFrom = Array.convert;
 try {
 	arrayFrom(document.html.childNodes);
-} catch(e){
-	Array.from = function(item){
+} catch (e){
+	Array.convert = function(item){
 		if (typeof item != 'string' && Type.isEnumerable(item) && typeOf(item) != 'array'){
 			var i = item.length, array = new Array(i);
 			while (i--) array[i] = item[i];
@@ -247,7 +247,7 @@ try {
 	['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift', 'concat', 'join', 'slice'].each(function(name){
 		var method = prototype[name];
 		Array[name] = function(item){
-			return method.apply(Array.from(item), slice.call(arguments, 1));
+			return method.apply(Array.convert(item), slice.call(arguments, 1));
 		};
 	});
 }
@@ -305,7 +305,7 @@ if (Browser.name == 'unknown'){
 		case 'webkit':
 		case 'khtml':
 			Browser.Engine.webkit = true;
-		break;
+			break;
 		case 'gecko':
 			Browser.Engine.gecko = true;
 	}

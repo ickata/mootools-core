@@ -6,96 +6,105 @@ provides: ~
 ...
 */
 
-describe("Number Methods", function(){
+describe('Number Method', function(){
 
-	// Number.toInt
+	describe('Number.toInt', function(){
 
-	it('should convert a number to an integer', function(){
-		expect((111).toInt()).toEqual(111);
-	});
-
-	it('should convert a number depending on the radix provided', function(){
-		expect((111).toInt(2)).toEqual(7);
-		expect((0x16).toInt(10)).toEqual(22); //ECMA standard, radix is optional so if starts with 0x then parsed as hexadecimal
-		expect((016).toInt(10)).toEqual(14); //ECMA standard, radix is optional so if starts with 0 then parsed as octal
-	});
-
-	// Number.toFloat
-
-	it('should convert a number to a float', function(){
-		expect((1.00).toFloat()).toEqual(1);
-		expect((1.12 - 0.12).toFloat()).toEqual(1);
-		expect((0.0010).toFloat()).toEqual(0.001);
-		expect((Number.MIN_VALUE).toFloat()).toEqual(Number.MIN_VALUE);
-	});
-
-	// Number.limit
-
-	it('should limit a number within a range', function(){
-		expect((-1).limit(0, 1)).toEqual(0);
-		expect((3).limit(1, 2)).toEqual(2);
-	});
-
-	it('should not limit a number if within the range', function(){
-		expect((2).limit(0,4)).toEqual(2);
-	});
-
-	// Number.round
-
-	it('should round a number to the nearest whole number if units place is not specified', function(){
-		expect((0.01).round()).toEqual(0);
-	});
-
-	it('should round a number according the units place specified', function(){
-		expect((0.01).round(2)).toEqual(0.01);
-		expect((1).round(3)).toEqual(1);
-		expect((-1.01).round()).toEqual(-1);
-		expect((-1.01).round(2)).toEqual(-1.01);
-		expect((111).round(-1)).toEqual(110);
-		expect((-111).round(-2)).toEqual(-100);
-		expect((100).round(-5)).toEqual(0);
-	});
-
-	// Number.times
-
-	it('should call the function for the specified number of times', function(){
-		var found = 0;
-		(3).times(function(i){
-			found = i;
+		it('should convert a number to an integer', function(){
+			expect((111).toInt()).to.equal(111);
 		});
 
-		var found2 = -1;
-		(0).times(function(i){
-			found2 = i;
+		it('should convert a number depending on the radix provided', function(){
+			expect((111).toInt(2)).to.equal(7);
+			expect((0x16).toInt(10)).to.equal(22); // ECMA standard, radix is optional so if starts with 0x then parsed as hexadecimal.
+			expect((016).toInt(10)).to.equal(14); // ECMA standard, radix is optional so if starts with 0 then parsed as octal.
 		});
 
-		expect(found).toEqual(2);
-		expect(found2).toEqual(-1);
 	});
 
-	it('should bind and call the function for the specified number of times', function(){
-		var aTest = 'hi';
-		var found3 = false;
-		(1).times(function(i){
-			found3 = (this == aTest);
-		}, aTest);
-		expect(found3).toBeTruthy();
+	describe('Number.toFloat', function(){
+
+		it('should convert a number to a float', function(){
+			expect((1.00).toFloat()).to.equal(1);
+			expect((1.12 - 0.12).toFloat()).to.equal(1);
+			expect((0.0010).toFloat()).to.equal(0.001);
+			expect((Number.MIN_VALUE).toFloat()).to.equal(Number.MIN_VALUE);
+		});
+	});
+
+	describe('Number.limit', function(){
+
+		it('should limit a number within a range', function(){
+			expect((-1).limit(0, 1)).to.equal(0);
+			expect((3).limit(1, 2)).to.equal(2);
+		});
+
+		it('should not limit a number if within the range', function(){
+			expect((2).limit(0, 4)).to.equal(2);
+		});
+
+	});
+
+	describe('Number.round', function(){
+
+		it('should round a number to the nearest whole number if units place is not specified', function(){
+			expect((0.01).round()).to.equal(0);
+		});
+
+		it('should round a number according the units place specified', function(){
+			expect((0.01).round(2)).to.equal(0.01);
+			expect((1).round(3)).to.equal(1);
+			expect((-1.01).round()).to.equal(-1);
+			expect((-1.01).round(2)).to.equal(-1.01);
+			expect((111).round(-1)).to.equal(110);
+			expect((-111).round(-2)).to.equal(-100);
+			expect((100).round(-5)).to.equal(0);
+		});
+
+	});
+
+	describe('Number.times', function(){
+
+		it('should call the function for the specified number of times', function(){
+			var found = 0;
+			(3).times(function(i){
+				found = i;
+			});
+
+			var found2 = -1;
+			(0).times(function(i){
+				found2 = i;
+			});
+
+			expect(found).to.equal(2);
+			expect(found2).to.equal(-1);
+		});
+
+		it('should bind and call the function for the specified number of times', function(){
+			var aTest = 'hi';
+			var found3 = false;
+			(1).times(function(){
+				found3 = (this == aTest);
+			}, aTest);
+			expect(found3).to.equal(true);
+		});
+
 	});
 
 });
 
-
 (function(math){
 
-	describe('Number Math Methods', function(){
-		Object.each(math, function(value, key){
-			var example = {};
-			var b = value.test[1];
-			it('should return the ' + value.title + ' value of the number' + ((b) ? ' and the passed number' : ''), function(){
-				expect(value.test[0][key](b)).toEqual(Math[key].apply(null, value.test));
-			});
+describe('Number Math Methods', function(){
+
+	Object.each(math, function(value, key){
+		var b = value.test[1];
+		it('should return the ' + value.title + ' value of the number' + ((b) ? ' and the passed number' : ''), function(){
+			expect(value.test[0][key](b)).to.equal(Math[key].apply(null, value.test));
 		});
 	});
+
+});
 
 })({
 	abs: { test: [-1], title: 'absolute' },

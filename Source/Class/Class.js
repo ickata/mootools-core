@@ -53,7 +53,7 @@ var reset = function(object){
 				var F = function(){};
 				F.prototype = value;
 				object[key] = reset(new F);
-			break;
+				break;
 			case 'array': object[key] = value.clone(); break;
 		}
 	}
@@ -106,7 +106,7 @@ Class.Mutators = {
 	},
 
 	Implements: function(items){
-		Array.from(items).each(function(item){
+		Array.convert(items).each(function(item){
 			var instance = new item;
 			for (var key in instance) implement.call(this, key, instance[key], true);
 		}, this);

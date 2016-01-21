@@ -9,7 +9,7 @@ provides: ~
 describe('Request.JSON', function(){
 
 	beforeEach(function(){
-		this.spy = jasmine.createSpy();
+		this.spy = sinon.spy();
 		this.xhr = sinon.useFakeXMLHttpRequest();
 		var requests = this.requests = [];
 		this.xhr.onCreate = function(xhr){
@@ -22,7 +22,6 @@ describe('Request.JSON', function(){
 	});
 
 	it('should create a JSON request', function(){
-
 		var response = '{"ok":true}';
 
 		this.spy.identity = 'Requst.JSON';
@@ -34,15 +33,13 @@ describe('Request.JSON', function(){
 		}});
 
 		this.requests[0].respond(200, {'Content-Type': 'text/json'}, response);
-		expect(this.spy.wasCalled).toBe(true);
+		expect(this.spy.called).to.equal(true);
 
-		// checks the first argument from the first call
-		expect(this.spy.argsForCall[0][0]).toEqual({ok: true});
-
+		// Checks the first argument from the first call.
+		expect(this.spy.args[0][0]).to.eql({ok: true});
 	});
 
 	it('should fire the error event', function(){
-
 		var response = '{"ok":function(){invalid;}}';
 
 		this.spy.identity = 'Requst.JSON error';
@@ -54,11 +51,10 @@ describe('Request.JSON', function(){
 		}});
 
 		this.requests[0].respond(200, {'Content-Type': 'text/json'}, response);
-		expect(this.spy.wasCalled).toBe(true);
+		expect(this.spy.called).to.equal(true);
 
-		// checks the first argument from the first call
-		expect(this.spy.argsForCall[0][0]).toEqual('{"ok":function(){invalid;}}');
-
+		// Checks the first argument from the first call.
+		expect(this.spy.args[0][0]).to.equal('{"ok":function(){invalid;}}');
 	});
 
 });

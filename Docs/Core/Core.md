@@ -285,11 +285,11 @@ If you really need this function you can implement it like so:
 Function: $empty {#Deprecated-Functions:empty}
 -------------------------
 
-This method has been deprecated. Use [Function.from](/core/Types/Function#Function:Function-from) instead.
+This method has been deprecated. Use [Function.convert](/core/Types/Function#Function:Function:convert) instead.
 
 ### Example:
 
-	var myFunc = Function.from();
+	var myFunc = Function.convert();
 	// or better:
 	var myFunc = function(){};
 
@@ -298,11 +298,11 @@ This method has been deprecated. Use [Function.from](/core/Types/Function#Functi
 Function: $lambda {#Deprecated-Functions:lambda}
 ---------------------------
 
-This method has been deprecated. Use [Function.from](/core/Types/Function#Function:Function-from) instead.
+This method has been deprecated. Use [Function.convert](/core/Types/Function#Function:Function:convert) instead.
 
 ### Example:
 
-	myLink.addEvent('click', Function.from(false)); // prevents a link Element from being clickable
+	myLink.addEvent('click', Function.convert(false)); // prevents a link Element from being clickable
 
 
 
@@ -344,8 +344,8 @@ This method has been deprecated. Please use [Number.random](/core/Types/Number#N
 Function: $splat {#Deprecated-Functions:splat}
 -------------------------
 
-This method has been deprecated. Please use [Array.from](/core/Types/Array#Array:Array-from) instead.
-However `$splat` does *not* transform Array-like objects such as NodeList or FileList in arrays, `Array.from` does.
+This method has been deprecated. Please use [Array.convert](/core/Types/Array#Array:Array:convert) instead.
+However `$splat` does *not* transform Array-like objects such as NodeList or FileList in arrays, `Array.convert` does.
 
 
 Function: $time {#Deprecated-Functions:time}

@@ -90,7 +90,7 @@ var floatName = (html.style.cssFloat == null) ? 'styleFloat' : 'cssFloat',
 
 var camelCase = function(property){
 	return property.replace(prefixPattern, '$1-').camelCase();
-}
+};
 
 //<ltIE9>
 var removeStyle = function(style, property){
@@ -120,7 +120,7 @@ Element.implement({
 		property = camelCase(property == 'float' ? floatName : property);
 		if (typeOf(value) != 'string'){
 			var map = (Element.Styles[property] || '@').split(' ');
-			value = Array.from(value).map(function(val, i){
+			value = Array.convert(value).map(function(val, i){
 				if (!map[i]) return '';
 				return (typeOf(val) == 'number') ? map[i].replace('@', Math.round(val)) : val;
 			}).join(' ');
